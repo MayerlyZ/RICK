@@ -1,6 +1,8 @@
-'use client';
+"use client";
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import styles from '@/app/components/auth/AuthLayout.module.css'
 
 interface LoginForm {
   email: string;
@@ -8,6 +10,7 @@ interface LoginForm {
 }
 
 export default function LoginPage() {
+  const router = useRouter();
   const [form, setForm] = useState<LoginForm>({
     email: '',
     password: '',
@@ -26,50 +29,67 @@ export default function LoginPage() {
     e.preventDefault();
     setError(null);
 
-    // Simulación de validación básica
     if (!form.email || !form.password) {
       setError('Todos los campos son obligatorios');
       return;
     }
 
-    console.warn('Login simulado:', form);
+    try {
+      const raw = localStorage.getItem('mock_users');
+      const users = raw ? JSON.parse(raw) : [];
+      const user = users.find((u: any) => u.email === form.email && u.password === form.password);
+      if (!user) {
+        setError('Credenciales inválidas');
+        return;
+      }
+      localStorage.setItem('current_user', JSON.stringify({ name: user.name, email: user.email }));
+      router.push('/');
+    } catch (err) {
+      setError('Error al autenticar');
+    }
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center">
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-sm space-y-4 border p-6 rounded"
-      >
-        <h1 className="text-xl font-semibold">Iniciar sesión</h1>
+    <div className={styles.container}>
+      <div className={styles.panel}>
+        <div className={styles.left}>
+          <img src="/img/rick.jpg" alt="Auth image" className={styles.image} />
+        </div>
 
-        {error && <p className="text-sm text-red-500">{error}</p>}
+        <div className={styles.right}>
+          <div className={styles.formWrapper}>
+            <form onSubmit={handleSubmit} className="w-full">
+              <h1 className={styles.title}>Iniciar sesión</h1>
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Correo electrónico"
-          value={form.email}
-          onChange={handleChange}
-          className="w-full border px-3 py-2 rounded"
-        />
+              {error && <p className={styles.error}>{error}</p>}
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Contraseña"
-          value={form.password}
-          onChange={handleChange}
-          className="w-full border px-3 py-2 rounded"
-        />
+              <input
+                type="email"
+                name="email"
+                placeholder="Correo electrónico"
+                value={form.email}
+                onChange={handleChange}
+                className={styles.input}
+              />
 
-        <button
-          type="submit"
-          className="w-full bg-black text-white py-2 rounded"
-        >
-          Ingresar
-        </button>
-      </form>
-    </main>
+              <input
+                type="password"
+                name="password"
+                placeholder="Contraseña"
+                value={form.password}
+                onChange={handleChange}
+                className={styles.input}
+              />
+
+              <button type="submit" className={styles.submitButton}>Ingresar</button>
+
+              <div className="text-sm text-center" style={{marginTop: 8}}>
+                <a href="/register" className={styles.smallLink}>Crear cuenta</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

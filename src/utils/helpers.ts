@@ -1,4 +1,5 @@
-export function isAlive(status) {
-  if(status === 'Alive') return true
-  else return false
-}
+export const isAlive = (status: string): boolean => {
+  return status === 'Alive';
+};
+
+export default isAlive;

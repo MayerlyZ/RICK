@@ -1,0 +1,27 @@
+.container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.name {
+  font-size: 14px;
+  color: #111111;
+}
+
+.button {
+  padding: 6px 10px;
+  background: #111111;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.login {
+  padding: 6px 10px;
+  background: transparent;
+  color: #111111;
+  text-decoration: none;
+  border-radius: 6px;
+}
